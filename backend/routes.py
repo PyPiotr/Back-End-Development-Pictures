@@ -93,16 +93,15 @@ def create_picture():
 
 @app.route("/picture/<int:id>", methods=["PUT"])
 def update_picture(id):
-    update_data = json.loads(request.data)
 
-    if not update_data:
-        return {"message": "Invalid input parameter"}, 400
-    
-    for index, ele in enumerate(data):
-        if ele.get("id") == id:
-            ele.update(update_data)
-            return make_response(data[index], 200)
-    
+    # get data from the json body
+    picture_in = request.json
+
+    for index, picture in enumerate(data):
+        if picture["id"] == id:
+            data[index] = picture_in
+            return picture, 201
+
     return {"message": "picture not found"}, 404
 
 ######################################################################
@@ -110,4 +109,10 @@ def update_picture(id):
 ######################################################################
 @app.route("/picture/<int:id>", methods=["DELETE"])
 def delete_picture(id):
-    pass
+
+    for picture in data:
+        if picture["id"] == id:
+            data.remove(picture)
+            return "", 204
+
+    return {"message": "picture not found"}, 404
